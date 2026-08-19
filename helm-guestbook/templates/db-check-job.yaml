@@ -3,8 +3,9 @@ kind: Job
 metadata:
   name: db-check-job
   annotations:
-    argocd.argoproj.io/sync-wave: "2"
+    argocd.argoproj.io/sync-wave: "2"    
 spec:
+  backoffLimit: 2
   template:
     metadata: {}
     spec:
@@ -12,16 +13,17 @@ spec:
       - command:
         - 'sh'
         - '-c'
-        - "echo 'Running db check to $DB_HOST'; sleep 5; echo 'Done!'"
+        - "echo 'Running db check to $DB_HOST'; sleep 5; echo 'Connected!'"
         image: busybox
-        name: read-env-job
+        name: check
         resources: {}
         env:
-        # Define the environment variable
         - name: DB_HOST
-            valueFrom:
-              configMapKeyRef:
-                name: db-config
-                key: db_host                
+          valueFrom: 
+            configMapKeyRef:
+              name: db-config
+              key: db_host
+          
+
       restartPolicy: Never
 status: {}
