@@ -1,0 +1,27 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: db-check-job
+  annotations:
+    argocd.argoproj.io/sync-wave: "2"
+spec:
+  template:
+    metadata: {}
+    spec:
+      containers:
+      - command:
+        - 'sh'
+        - '-c'
+        - "echo 'Running db check to $DB_HOST'; sleep 5; echo 'Done!'"
+        image: busybox
+        name: read-env-job
+        resources: {}
+        env:
+        # Define the environment variable
+        - name: DB_HOST
+            valueFrom:
+              configMapKeyRef:
+                name: db-config
+                key: db_host                
+      restartPolicy: Never
+status: {}
